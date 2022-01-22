@@ -26,19 +26,16 @@ const styles = StyleSheet.create({
   },
 });
 
-// const uuid = () => `${Math.randosm()}` + `${Math.random}`;
-
 const Home = ({navigation}) => {
   const [text, setText] = useState('');
   const [todos, setTodos] = useState<TodoI[]>([]);
 
-  const handleClick = async () => {
+  const handleClick = (): void => {
     if (!text) {
       Alert.alert('Error', 'Please enter a name for the to-do');
       return;
     }
     const newTodo = {name: text, id: uuid(), isDone: false};
-    await setItemsToStorage('todos', [...todos, newTodo]).catch(console.log);
     setTodos(prevState => [...prevState, newTodo]);
     setText('');
   };
@@ -59,9 +56,15 @@ const Home = ({navigation}) => {
     (async function () {
       const items = await getItemsFromStorage('todos');
       console.log(items);
-      if (items) setTodos(items);
+      setTodos(items);
     })().catch(console.log);
   }, []);
+
+  useEffect(() => {
+    (async function () {
+      await setItemsToStorage('todos', todos);
+    })();
+  }, [todos]);
 
   return (
     <View style={styles.container}>
