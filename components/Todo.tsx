@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -50,8 +50,11 @@ const Todo = ({
   navigation,
 }: TodoProps) => {
   const [shouldDelete, setShouldDelete] = useState(false);
+  const isNew = useRef(true);
 
   useEffect(() => {
+    console.log(isNew.current);
+    isNew.current = false;
     if (shouldDelete) {
       setTimeout(() => {
         handleDelete(id);
@@ -63,6 +66,7 @@ const Todo = ({
     <FadeOutView
       fade={shouldDelete}
       key={id}
+      isNew={isNew.current}
       style={{...styles.flex, ...styles.item}}>
       <Text
         onPress={() => navigation.navigate('Details', {name, isDone, id})}
