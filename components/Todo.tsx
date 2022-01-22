@@ -1,9 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import FadeOutView from './FadeInView';
 
 export interface TodoI {
   name: string;
@@ -48,9 +49,21 @@ const Todo = ({
   handleDone,
   navigation,
 }: TodoProps) => {
-  console.log(isDone);
+  const [shouldDelete, setShouldDelete] = useState(false);
+
+  useEffect(() => {
+    if (shouldDelete) {
+      setTimeout(() => {
+        handleDelete(id);
+      }, 1000);
+    }
+  }, [shouldDelete, handleDelete, id]);
+
   return (
-    <View key={id} style={{...styles.flex, ...styles.item}}>
+    <FadeOutView
+      fade={shouldDelete}
+      key={id}
+      style={{...styles.flex, ...styles.item}}>
       <Text
         onPress={() => navigation.navigate('Details', {name, isDone, id})}
         style={{
@@ -60,14 +73,14 @@ const Todo = ({
         - {name}
       </Text>
       <View style={{...styles.flex, ...styles.buttons}}>
-        <Icon onPress={() => handleDelete(id)} name="remove" size={20} />
+        <Icon onPress={() => setShouldDelete(true)} name="remove" size={20} />
         <Icon
           onPress={() => handleDone(id)}
           name={isDone ? 'undo' : 'check'}
           size={20}
         />
       </View>
-    </View>
+    </FadeOutView>
   );
 };
 
