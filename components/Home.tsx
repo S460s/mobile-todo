@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   TextInput,
   View,
@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import {v4 as uuid} from 'uuid';
+import {getItemsFromStorage, setItemsToStorage} from '../utils/localStorage';
 
 import Todo, {TodoI} from './Todo';
 
@@ -29,19 +30,16 @@ const styles = StyleSheet.create({
 
 const Home = ({navigation}) => {
   const [text, setText] = useState('');
-  const [todos, setTodos] = useState<TodoI[]>([
-    {name: 'Learn React Native', id: uuid(), isDone: false},
-  ]);
+  const [todos, setTodos] = useState<TodoI[]>([]);
 
-  const handleClick = (): void => {
+  const handleClick = async () => {
     if (!text) {
       Alert.alert('Error', 'Please enter a name for the to-do');
       return;
     }
-    setTodos(prevState => [
-      ...prevState,
-      {name: text, id: uuid(), isDone: false},
-    ]);
+    const newTodo = {name: text, id: uuid(), isDone: false};
+    await setItemsToStorage('todos', [...todos, newTodo]).catch(console.log);
+    setTodos(prevState => [...prevState, newTodo]);
     setText('');
   };
 
@@ -56,6 +54,14 @@ const Home = ({navigation}) => {
       ),
     );
   };
+
+  useEffect(() => {
+    (async function () {
+      const items = await getItemsFromStorage('todos');
+      console.log(items);
+      if (items) setTodos(items);
+    })().catch(console.log);
+  }, []);
 
   return (
     <View style={styles.container}>

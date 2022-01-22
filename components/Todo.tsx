@@ -53,7 +53,6 @@ const Todo = ({
   const isNew = useRef(true);
 
   useEffect(() => {
-    console.log(isNew.current);
     isNew.current = false;
     if (shouldDelete) {
       setTimeout(() => {

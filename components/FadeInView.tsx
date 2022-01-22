@@ -3,7 +3,6 @@ import {Animated} from 'react-native';
 
 const FadeOutView = props => {
   const fadeAnim = useRef(new Animated.Value(props.isNew ? 0 : 1)).current;
-  console.log(props.isNew + ' 123');
   useEffect(() => {
     if (props.fade || props.isNew) {
       Animated.timing(fadeAnim, {
